@@ -6,8 +6,6 @@ from argparse import ArgumentParser
 
 import cv2
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 
 import pytorch_lightning as pl
 import segmentation_models_pytorch as smp
@@ -31,65 +29,6 @@ parser.add_argument('--images_dir')
 parser.add_argument('--masks_dir')
 parser.add_argument('--models_dir', default='models')
 args = parser.parse_args()
-
-os.makedirs(args.models_dir, exist_ok=True)
-
-GLOBAL_CONFIG = {
-    'gpus': [0],
-    'seed': 17,
-    
-    'folds_count': 3,
-    
-    'IMG_H': 512,
-    'IMG_W': 512*2,
-    
-    'bs': 2,
-    'epoch': 128,
-    'num_workers': 2,
-    
-    'start_lr': 0.001,
-    'max_lr': 0.002,
-    
-    'wandb': False,
-    'exp_name': 'unet_resnext50_32x4d',
-}
-
-
-seed_everything(GLOBAL_CONFIG['seed'])
-if GLOBAL_CONFIG['wandb'] :
-    import wandb
-    wandb.login()
-    wandb.config = GLOBAL_CONFIG
-
-TRAIN_IMAGES_FOLDER = args.images_dir
-TRAIN_MASKS_FOLDER = args.masks_dir
-
-TRAIN_IMG_NAMES = get_img_names(TRAIN_IMAGES_FOLDER)
-LABELS = [0, 6, 7, 10]
-
-LABEL2NAME = {
-    0: 'bg',
-    6: 'side_rails',
-    7: 'main_rails',
-    10: 'trains',
-}
-NAME2LABEL = {v:k for k,v in LABEL2NAME.items()}
-
-LABEL2COLOR = {
-    0: 0,
-    6: 64,
-    7: 128,
-    10: 255,
-}
-
-LABEL2CLASS = {
-    0: 0,
-    6: 1,
-    7: 2,
-    10: 3,
-}
-CLASS2LABEL = {v:k for k,v in LABEL2CLASS.items()}
-
 
 def get_img_names(folder, img_format='png'):
     img_paths = glob.glob(os.path.join(folder, f'*.{img_format}'))
@@ -141,6 +80,63 @@ def process_mask2np(image):
     img = image.cpu().clone()
     img = img.numpy() 
     return img
+os.makedirs(args.models_dir, exist_ok=True)
+
+GLOBAL_CONFIG = {
+    'gpus': [0],
+    'seed': 17,
+    
+    'folds_count': 3,
+    
+    'IMG_H': 512,
+    'IMG_W': 512*2,
+    
+    'bs': 2,
+    'epoch': 3,
+    'num_workers': 2,
+    
+    'start_lr': 0.001,
+    'max_lr': 0.002,
+    
+    'wandb': False,
+    'exp_name': 'unet_resnext50_32x4d',
+}
+
+if GLOBAL_CONFIG['wandb'] :
+    import wandb
+    wandb.login()
+    wandb.config = GLOBAL_CONFIG
+
+TRAIN_IMAGES_FOLDER = args.images_dir
+TRAIN_MASKS_FOLDER = args.masks_dir
+
+TRAIN_IMG_NAMES = get_img_names(TRAIN_IMAGES_FOLDER)
+print(TRAIN_IMG_NAMES)
+LABELS = [0, 6, 7, 10]
+
+LABEL2NAME = {
+    0: 'bg',
+    6: 'side_rails',
+    7: 'main_rails',
+    10: 'trains',
+}
+NAME2LABEL = {v:k for k,v in LABEL2NAME.items()}
+
+LABEL2COLOR = {
+    0: 0,
+    6: 64,
+    7: 128,
+    10: 255,
+}
+
+LABEL2CLASS = {
+    0: 0,
+    6: 1,
+    7: 2,
+    10: 3,
+}
+CLASS2LABEL = {v:k for k,v in LABEL2CLASS.items()}
+
 
 class TrainDataset(Dataset):
     def __init__(self, images_names, images_folder, masks_folder, augmentations=None):

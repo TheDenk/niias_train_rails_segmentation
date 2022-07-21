@@ -6,7 +6,6 @@ import gdown
 import torch
 import torch.nn.functional as F
 import numpy as np
-import matplotlib.pyplot as plt
 from tqdm import tqdm
 from PIL import Image
 from argparse import ArgumentParser
@@ -17,7 +16,7 @@ from torch.utils.data import DataLoader, Dataset
 
 
 parser = ArgumentParser()
-parser.add_argument('--masks_dir')
+parser.add_argument('--images_dir')
 parser.add_argument('--out_dir')
 args = parser.parse_args()
 
@@ -69,8 +68,7 @@ class TestDataset(Dataset):
         return {'image': image, 'image_name': img_name, 'orig_h': h, 'orig_w': w}
     
     
-TEST_IMAGES_FOLDER = args.masks_dir
-# TEST_IMAGES_FOLDER = # PATH TO TEST IMAGES
+TEST_IMAGES_FOLDER = args.images_dir
 TEST_IMG_NAMES = get_img_names(TEST_IMAGES_FOLDER)
 
 LABELS = [0, 6, 7, 10]
@@ -87,84 +85,84 @@ GLOBAL_CONFIG = {
 models = [
     {
         'model': smp.Unet(encoder_name="resnet34", classes=len(LABELS)),
-        'ckpt_path': '../models/unet_resnet34_0.pt',
+        'ckpt_path': './models/unet_resnet34_0.pt',
         'name': 'unet_resnet34',
         'use_tta': False,
         'weight': 0.08333333333333333,
     },
     {
         'model': smp.Unet(encoder_name="resnet34", classes=len(LABELS)),
-        'ckpt_path': '../models/unet_resnet34_1.pt',
+        'ckpt_path': './models/unet_resnet34_1.pt',
         'name': 'unet_resnet34',
         'use_tta': False,
         'weight': 0.08333333333333333,
     },
     {
         'model': smp.Unet(encoder_name="resnet34", classes=len(LABELS)),
-        'ckpt_path': '../models/unet_resnet34_2.pt',
+        'ckpt_path': './models/unet_resnet34_2.pt',
         'name': 'unet_resnet34',
         'use_tta': False,
         'weight': 0.08333333333333333,
     },
     {
         'model': smp.Unet(encoder_name="resnext50_32x4d", classes=len(LABELS)),
-        'ckpt_path': '../models/unet_resnext50_32x4d_0.pt',
+        'ckpt_path': './models/unet_resnext50_32x4d_0.pt',
         'name': 'fpn_resnext50_32x4d',
         'use_tta': False,
         'weight': 0.08333333333333333,
     },
     {
         'model': smp.Unet(encoder_name="resnext50_32x4d", classes=len(LABELS)),
-        'ckpt_path': '../models/unet_resnext50_32x4d_1.pt',
+        'ckpt_path': './models/unet_resnext50_32x4d_1.pt',
         'name': 'fpn_resnext50_32x4d',
         'use_tta': False,
         'weight': 0.08333333333333333,
     },
     {
         'model': smp.Unet(encoder_name="resnext50_32x4d", classes=len(LABELS)),
-        'ckpt_path': '../models/unet_resnext50_32x4d_2.pt',
+        'ckpt_path': './models/unet_resnext50_32x4d_2.pt',
         'name': 'fpn_resnext50_32x4d',
         'use_tta': False,
         'weight': 0.08333333333333333,
     },
     {
         'model': smp.UnetPlusPlus(encoder_name='resnet34', classes=len(LABELS)),
-        'ckpt_path': '../models/unetplus_resnet34_0.pt',
+        'ckpt_path': './models/unetplus_resnet34_0.pt',
         'name': 'unetplus_resnet34',
         'use_tta': False,
         'weight': 0.08333333333333333,
     },
     {
         'model': smp.UnetPlusPlus(encoder_name='resnet34', classes=len(LABELS)),
-        'ckpt_path': '../models/unetplus_resnet34_1.pt',
+        'ckpt_path': './models/unetplus_resnet34_1.pt',
         'name': 'unetplus_resnet34',
         'use_tta': False,
         'weight': 0.08333333333333333,
     },
     {
         'model': smp.UnetPlusPlus(encoder_name='resnet34', classes=len(LABELS)),
-        'ckpt_path': '../models/unetplus_resnet34_2.pt',
+        'ckpt_path': './models/unetplus_resnet34_2.pt',
         'name': 'unetplus_resnet34',
         'use_tta': False,
         'weight': 0.08333333333333333,
     },
     {
         'model': smp.Unet(encoder_name="resnext50_32x4d", classes=len(LABELS)),
-        'ckpt_path': '../models/unet_resnext50_32x4d_hard_augs_0.pt',
+        'ckpt_path': './models/unet_resnext50_32x4d_hard_augs_0.pt',
         'name': 'fpn_resnext50_32x4d',
         'use_tta': False,
         'weight': 0.08333333333333333,
     },
     {
         'model': smp.Unet(encoder_name="resnext50_32x4d", classes=len(LABELS)),
-        'ckpt_path': '../models/unet_resnext50_32x4d_hard_augs_1.pt',
+        'ckpt_path': './models/unet_resnext50_32x4d_hard_augs_1.pt',
         'name': 'fpn_resnext50_32x4d',
         'use_tta': False,
         'weight': 0.08333333333333333,
     },
     {
         'model': smp.Unet(encoder_name="resnext50_32x4d", classes=len(LABELS)),
-        'ckpt_path': '../models/unet_resnext50_32x4d_hard_augs_2.pt',
+        'ckpt_path': './models/unet_resnext50_32x4d_hard_augs_2.pt',
         'name': 'fpn_resnext50_32x4d',
         'use_tta': False,
         'weight': 0.08333333333333333,
